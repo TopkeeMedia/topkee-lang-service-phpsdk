@@ -1,0 +1,41 @@
+{
+  "name": "topkee/topkee-lang-service-phpsdk",
+  "description": "topkee多语言sdk php版本",
+  "type": "library",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "scripts": {
+    "test": "vendor/bin/phpunit tests/Test.php"
+  },
+  "autoload": {
+    "psr-4": {
+      "Topkee\\LangServicePhpsdk\\": "src/"
+    }
+  },
+  "autoload-dev":{
+    "psr-4":{
+      "Topkee\\LangServicePhpsdk\\":"src/",
+      "Topkee\\LangServicePhpsdk\\Test\\": "tests"
+    }
+  },
+  "authors": [
+    {
+      "name": "ngy",
+      "email": "782413674@qq.com"
+    }
+  ],
+  "keywords": [
+    "topkee",
+    "lang",
+    "service"
+  ],
+  "homepage":"https://github.com/TopkeeMedia/topkee-lang-service-phpsdk",
+  "require": {
+    "php": ">=7.3",
+    "guzzlehttp/guzzle": "^7.0.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.2",
+    "monolog/monolog": "^1.23"
+  }
+}
