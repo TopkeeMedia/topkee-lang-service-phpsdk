@@ -33,7 +33,7 @@
   "require": {
     "php": ">=7.3",
     "guzzlehttp/guzzle": "^7.0.1",
-    "tonirilix/nested-json-flattener": "dev-master",
+    "tonirilix/nested-json-flattener": "^2.1",
     "ext-json": "*"
   },
   "require-dev": {

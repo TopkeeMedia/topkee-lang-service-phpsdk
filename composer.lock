@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff64697b642b2fd7d381f037bf5b22c5",
+    "content-hash": "22886be49c589aa4fdb118dee03dcb84",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -333,54 +333,6 @@
             "time": "2022-05-02T17:34:52+00:00"
         },
         {
-            "name": "peekmo/jsonpath",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Peekmo/JsonPath.git",
-                "reference": "0b339171b7eab5791bbb71549305a7e0e2a4ca52"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Peekmo/JsonPath/zipball/0b339171b7eab5791bbb71549305a7e0e2a4ca52",
-                "reference": "0b339171b7eab5791bbb71549305a7e0e2a4ca52",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.1"
-            },
-            "default-branch": true,
-            "type": "project",
-            "autoload": {
-                "psr-0": {
-                    "Peekmo\\JsonPath": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Stefan Goessner"
-                },
-                {
-                    "name": "Axel Anceau",
-                    "email": "axel.anceau@gmail.com"
-                }
-            ],
-            "description": "Library to use JsonPath",
-            "homepage": "https://github.com/Peekmo/JsonPath",
-            "support": {
-                "issues": "https://github.com/Peekmo/JsonPath/issues",
-                "source": "https://github.com/Peekmo/JsonPath/tree/master"
-            },
-            "time": "2015-04-30T05:56:14+00:00"
-        },
-        {
             "name": "psr/http-client",
             "version": "dev-master",
             "source": {
@@ -656,25 +608,21 @@
         },
         {
             "name": "tonirilix/nested-json-flattener",
-            "version": "dev-master",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tonirilix/nested-json-flattener.git",
-                "reference": "1aebef9584d846ef7de028ed9449ff5391273b20"
+                "reference": "20396e7dfd040b6061a5b85e72fe4e187f3d499f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tonirilix/nested-json-flattener/zipball/1aebef9584d846ef7de028ed9449ff5391273b20",
-                "reference": "1aebef9584d846ef7de028ed9449ff5391273b20",
+                "url": "https://api.github.com/repos/tonirilix/nested-json-flattener/zipball/20396e7dfd040b6061a5b85e72fe4e187f3d499f",
+                "reference": "20396e7dfd040b6061a5b85e72fe4e187f3d499f",
                 "shasum": ""
             },
-            "require": {
+            "require-dev": {
                 "peekmo/jsonpath": "dev-master"
             },
-            "require-dev": {
-                "phpunit/phpunit": "^6.5"
-            },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -703,9 +651,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tonirilix/nested-json-flattener/issues",
-                "source": "https://github.com/tonirilix/nested-json-flattener/tree/master"
+                "source": "https://github.com/tonirilix/nested-json-flattener/tree/v2.1.2"
             },
-            "time": "2018-09-05T07:58:52+00:00"
+            "time": "2018-09-04T06:58:04+00:00"
         }
     ],
     "packages-dev": [
@@ -2482,13 +2430,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "tonirilix/nested-json-flattener": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.3"
+        "php": ">=7.3",
+        "ext-json": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
