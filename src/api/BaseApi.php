@@ -8,19 +8,21 @@ use Psr\Http\Message\ResponseInterface;
 abstract class BaseApi
 {
     const url="https://market-api.topkee.top/v1/lang/";
+//    const url="http://localhost:8089/v1/lang/";
     public static function getUrl(){
       return self::url;
     }
     /**
-     * @param string $url
+     * @param string $api
      * @param string $type
      * @param array $faxData
      * @param array $headers
      * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function httpRequst(string $url, string $type = 'GET', array $faxData = [], array $headers = [],int $timeout=60):array
+    public static function httpRequst(string $api, string $type = 'GET', array $faxData = [], array $headers = [],int $timeout=60):array
     {
+        $url=self::getUrl().$api;
 //        $fun_args=json_encode($faxData);
         $client = new Client(['timeout' => $timeout]);
         if (in_array(strtoupper($type), ['GET', 'DELETE'])) {

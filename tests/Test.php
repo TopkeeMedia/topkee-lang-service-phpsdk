@@ -25,7 +25,7 @@ class Test extends TestCase
     public function testSdk(){
         $sdk=new LangSdk(1122,3344);
         $that=$this;
-        $sdk2=$sdk->setOnLocaleMessage(function ($appid,$appsecret) use ($that) {
+        $sdk2=$sdk->onLocaleMessage(function ($appid,$appsecret) use ($that) {
 //            $that->Log()->info("参数 $appid,$appsecret");
         });
         $this->assertEquals($sdk,$sdk2);
@@ -39,12 +39,59 @@ class Test extends TestCase
 //        $this->Log()->info("http $rs");
 //        $this->assertNotEmpty($rs);
 //    }
-    public function testCheckServe(){
+//    public function testCheckServe(){
+//
+//        $sdk=new LangSdk(1122,3344);
+//        $rs=$sdk->checkServe();
+//        $this->assertEquals($rs,true);
+//    }
+//
+    public function testInit(){
+        echo PHP_EOL;
+        $sdk=new LangSdk('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
+        $that=$this;
+        $sdk->onLocaleMessage(function ($lang,$message) {
+            echo $lang.PHP_EOL.json_encode($message,JSON_PRETTY_PRINT).PHP_EOL;
 
-        $rs=Project::checkServe();
-        $this->Log()->info("testCheckServe ".json_encode($rs));
-        $this->assertNotEmpty($rs);
+        });
+        $sdk->init();
+//        $sdk->loadLocalesMessages([]);
+        $sdk->loadLocalesMessages([
+            "en"=>[
+                "test.test2"=>"test",
+                "care"=>[
+                    "add"=>"test add2"
+                ]
+
+             ]
+        ]);
+        $messages=$sdk->getMessages();
+//        echo json_encode($pp,JSON_PRETTY_PRINT);
+        $this->assertEquals(true,true);
     }
+//    public function testArrayMerg(){
+//
+//       $arr=[
+//           'a'=>'aa',
+//           'b'=>'bb',
+//           'c'=>'cc',
+//           'd'=>[
+//               'e'=>'ee'
+//           ]
+//       ];
+//       $arr2=[
+//           'a'=>'aa2',
+//           'a.d.g'=>'gg2',
+//           'bbb'=>'bbb2',
+//           'c'=>'cc2',
+//           'd'=>[
+//               'e2'=>'ee2'
+//           ]
+//       ];
+//       $arr3=array_merge(LangSdk::flatArray($arr),LangSdk::flatArray($arr2));
+//       echo json_encode($arr3,JSON_PRETTY_PRINT);
+//       $this->assertEquals(true,true);
+//    }
 
     public function Log()
     {

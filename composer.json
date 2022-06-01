@@ -32,7 +32,9 @@
   "homepage":"https://github.com/TopkeeMedia/topkee-lang-service-phpsdk",
   "require": {
     "php": ">=7.3",
-    "guzzlehttp/guzzle": "^7.0.1"
+    "guzzlehttp/guzzle": "^7.0.1",
+    "tonirilix/nested-json-flattener": "dev-master",
+    "ext-json": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^6.2",

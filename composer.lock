@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e474f15bad1d2210993b0d629fb4be11",
+    "content-hash": "ff64697b642b2fd7d381f037bf5b22c5",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -333,6 +333,54 @@
             "time": "2022-05-02T17:34:52+00:00"
         },
         {
+            "name": "peekmo/jsonpath",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Peekmo/JsonPath.git",
+                "reference": "0b339171b7eab5791bbb71549305a7e0e2a4ca52"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Peekmo/JsonPath/zipball/0b339171b7eab5791bbb71549305a7e0e2a4ca52",
+                "reference": "0b339171b7eab5791bbb71549305a7e0e2a4ca52",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.1"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-0": {
+                    "Peekmo\\JsonPath": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stefan Goessner"
+                },
+                {
+                    "name": "Axel Anceau",
+                    "email": "axel.anceau@gmail.com"
+                }
+            ],
+            "description": "Library to use JsonPath",
+            "homepage": "https://github.com/Peekmo/JsonPath",
+            "support": {
+                "issues": "https://github.com/Peekmo/JsonPath/issues",
+                "source": "https://github.com/Peekmo/JsonPath/tree/master"
+            },
+            "time": "2015-04-30T05:56:14+00:00"
+        },
+        {
             "name": "psr/http-client",
             "version": "dev-master",
             "source": {
@@ -605,6 +653,59 @@
                 }
             ],
             "time": "2022-01-02T09:53:40+00:00"
+        },
+        {
+            "name": "tonirilix/nested-json-flattener",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tonirilix/nested-json-flattener.git",
+                "reference": "1aebef9584d846ef7de028ed9449ff5391273b20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tonirilix/nested-json-flattener/zipball/1aebef9584d846ef7de028ed9449ff5391273b20",
+                "reference": "1aebef9584d846ef7de028ed9449ff5391273b20",
+                "shasum": ""
+            },
+            "require": {
+                "peekmo/jsonpath": "dev-master"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.5"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "NestedJsonFlattener\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "tonirilix",
+                    "email": "jesusmontes.mx@hotmail.com"
+                }
+            ],
+            "description": "A php package to flatten nested json objects and nested arrays. It also allows you to create csv files from the flattened data.",
+            "keywords": [
+                "Flatten nested json",
+                "convert json to csv",
+                "csv",
+                "csv writer",
+                "json",
+                "json flattener",
+                "nested json"
+            ],
+            "support": {
+                "issues": "https://github.com/tonirilix/nested-json-flattener/issues",
+                "source": "https://github.com/tonirilix/nested-json-flattener/tree/master"
+            },
+            "time": "2018-09-05T07:58:52+00:00"
         }
     ],
     "packages-dev": [
@@ -2381,7 +2482,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "tonirilix/nested-json-flattener": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
