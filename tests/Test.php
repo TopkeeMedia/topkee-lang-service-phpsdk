@@ -22,14 +22,14 @@ class Test extends TestCase
 //        $this->Log()->info(trim($ss));
         $this->assertEquals(trim($ss),'sss');
     }
-    public function testSdk(){
-        $sdk=new LangSdk(1122,3344);
-        $that=$this;
-        $sdk2=$sdk->onLocaleMessage(function ($appid,$appsecret) use ($that) {
-//            $that->Log()->info("参数 $appid,$appsecret");
-        });
-        $this->assertEquals($sdk,$sdk2);
-    }
+//    public function testSdk(){
+//        $sdk=LangSdk::getInstance(1122,3344);
+//        $that=$this;
+//        $sdk2=$sdk->onLocaleMessage(function ($appid,$appsecret) use ($that) {
+////            $that->Log()->info("参数 $appid,$appsecret");
+//        });
+//        $this->assertEquals($sdk,$sdk2);
+//    }
 //    public function testHttp(){
 //        $client = new Client();
 //        $res = $client->request('GET', 'https://market-api.topkee.top/v1/lang/checkserve', [
@@ -48,14 +48,21 @@ class Test extends TestCase
 //
     public function testInit(){
         echo PHP_EOL;
-        $sdk=new LangSdk('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
-        $that=$this;
-        $sdk->onLocaleMessage(function ($lang,$message) {
-            echo $lang.PHP_EOL.json_encode($message,JSON_PRETTY_PRINT).PHP_EOL;
+        $sdk=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
+        $sdk2=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
+        $sdk3=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
+        $sdk4=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
+        $sdk5=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
+        $sdk26=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
+        $sdk7=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
+        if($sdk7===$sdk){
+            echo '单例'.PHP_EOL;
+        }
+//        $sdk->onLocaleMessage(function ($lang,$message) {
+//            echo $lang.PHP_EOL.json_encode($message,JSON_PRETTY_PRINT).PHP_EOL;
+//
+//        });
 
-        });
-        $sdk->init();
-//        $sdk->loadLocalesMessages([]);
         $sdk->loadLocalesMessages([
             "en"=>[
                 "test.test2"=>"test",
@@ -66,7 +73,7 @@ class Test extends TestCase
              ]
         ]);
         $messages=$sdk->getMessages();
-//        echo json_encode($pp,JSON_PRETTY_PRINT);
+        echo json_encode($messages,JSON_PRETTY_PRINT);
         $this->assertEquals(true,true);
     }
 //    public function testArrayMerg(){

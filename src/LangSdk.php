@@ -65,26 +65,50 @@ class LangSdk
      */
     private $versionObj;
 
-    public function __construct(string $appid, string $appsecret)
+
+    /**
+     * 静态成品变量 保存全局实例
+     */
+    private static $_instance = NULL;
+
+    /**
+     * 静态工厂方法，返还此类的唯一实例
+     * @throws \Exception
+     */
+    public static function getInstance(string $appid, string $appsecret) {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new self($appid, $appsecret);
+            // 或者这样写
+            // self::$_instance = new self();
+        }
+
+        return self::$_instance;
+    }
+
+    /**
+     * 防止用户克隆实例
+     */
+    public function __clone(){
+        die('Clone is not allowed.' . E_USER_ERROR);
+    }
+
+    private function __construct(string $appid, string $appsecret)
     {
         if(empty($appid)||empty($appid)){
             throw new \Exception("缺少 appsecret或者appid");
         }
         $this->appsecret =trim($appsecret);
         $this->appid = trim($appid);
+        $this->serveLive = $this->checkServe();
+        $this->project = $this->getProject();
+        $this->messages = $this->getMessages();
 
     }
     public function onLocaleMessage(\Closure $onLocaleMessage){
         $this->onLocaleMessageClosure=$onLocaleMessage;
         return $this;
     }
-    public function init(): LangSdk
-    {
-        $this->serveLive = $this->checkServe();
-        $this->project = $this->getProject();
-        $this->messages = $this->getMessages();
-        return $this;
-    }
+
     public function loadLocalesMessages(array $messages): array
     {
         $messagesObj = is_string($messages)?json_decode($messages,true):$messages;

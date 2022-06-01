@@ -21,16 +21,14 @@ composer require topkee/topkee-lang-service-phpsdk
         $appid='111111';
         $appsecret='222222';
        // 1创建sdk实例
-        $sdk=new LangSdk($appid,$appsecret);
+        $sdk=LangSdk::getInstance($appid,$appsecret);
 //        $sdk->onLocaleMessage(function ($lang,$message) {
 //            echo "语言 $lang 配置： ".json_encode($message,JSON_PRETTY_PRINT).PHP_EOL;
 //
 //        });
-        // 2 初始化
-        $sdk->init();
-        // 加载本地配置到sdk
+        // 2 加载本地配置到sdk
         $sdk->loadLocalesMessages($localMessages);
-        // 4 获取合并后的多语言配置
+        // 3 获取合并后的多语言配置
         $messages=$sdk->getMessages();
 //        echo json_encode($messages);
 //        {
@@ -53,7 +51,7 @@ composer require topkee/topkee-lang-service-phpsdk
 //            }
 //        }
 
-        // 5 安装i18n做翻译
+        // 4 安装i18n做翻译(不一定要使用这个库)
         // composer require alpakaio/i18next-php
         $i18n = new I18n([
             'lng'           =>  'en',
