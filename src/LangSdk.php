@@ -101,7 +101,8 @@ class LangSdk
             }
             $value=self::flatArray($value);
         }
-        $this->messages=self::mergMessages($this->messages,$messagesObj);
+        // 以服务器配置优先
+        $this->messages=self::mergMessages($messagesObj,$this->messages);
         $this->callSetLocaleMessage();
         return $this->messages;
     }
