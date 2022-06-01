@@ -1,5 +1,5 @@
-## 到多语言管理后添加项目
- 记住项目的appid和appsecret
+## 在多语言管理后添加项目
+ 记住项目的appid和appsecret， 假设你的项目  appid='111111'  appsecret='222222'
  
 ## 安装php版sdk
 ```cmd
@@ -17,8 +17,10 @@ composer require topkee/topkee-lang-service-phpsdk
 
              ]
         ];
+        $appid='111111';
+        $appsecret='222222';
        // 1创建sdk实例
-        $sdk=new LangSdk('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
+        $sdk=new LangSdk($appid,$appsecret);
 //        $sdk->onLocaleMessage(function ($lang,$message) {
 //            echo "语言 $lang 配置： ".json_encode($message,JSON_PRETTY_PRINT).PHP_EOL;
 //
