@@ -10,10 +10,6 @@ use Topkee\LangServicePhpsdk\api\Version;
 
 class LangSdk
 {
-    /**
-     * @var bool
-     */
-    private static $needGetServeMessages=true;
     private  $langNames=[
           'zh'=> '简体中文',
           'zh-CN'=> '简体中文',
@@ -178,7 +174,7 @@ class LangSdk
     }
     public function serverLiving(): bool
     {
-        return self::checkServe()!==false;
+        return self::checkProject()!==false;
     }
     public function getMessages(): array
     {
@@ -197,7 +193,7 @@ class LangSdk
     }
     public function getServeMessages(): ?array
     {
-        if ($this->serveLive&&self::$needGetServeMessages) {
+        if ($this->serveLive&&self::checkIfneedGetServeMessages()) {
             try {
                 try {
                     $this->versionObj =Version::getVersion($this->appid, $this->appsecret, $this->version)['data'];
@@ -215,7 +211,8 @@ class LangSdk
                 foreach ($this->versionObj['langs'] as $lang){
                     $localesMessages[$lang['code']]=self::flatArray($this->getLangKv($lang));
                 }
-                $updated_at=$this->checkServe();
+                // 记住改项目的服务器更新最后时间，这样就不会频繁请求服务器
+                $updated_at=self::checkProject();
                 if($updated_at!==false){
                     self::$updated_at=$updated_at;
                 }
@@ -230,15 +227,20 @@ class LangSdk
     public function getVersion(){
         return $this->versionObj;
     }
-    public function checkServe(){
+    public function checkIfneedGetServeMessages():bool
+    {
+        $updated_at=self::checkProject();
+        if($updated_at&&$updated_at>self::$updated_at){
+          return true;
+        }else{
+          return false;
+        }
+    }
+
+    public function checkProject(){
         try {
-            $updated_at=Project::checkServe()['data']['updated_at'];
-            if($updated_at>self::$updated_at){
-                self::$needGetServeMessages=true;
-            }else{
-                self::$needGetServeMessages=false;
-            }
-           return $updated_at;
+            $updated_at=Project::checkProject($this->appid,$this->appsecret)['data']['updated_at']??100;
+            return $updated_at;
         }catch (\Exception $exception){
             return false;
         }

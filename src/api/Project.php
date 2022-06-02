@@ -6,8 +6,8 @@ use phpDocumentor\Reflection\Types\This;
 
 class Project extends BaseApi
 {
-    public static function checkServe(){
-        $rs= self::httpRequst("checkserve",'get',[],[],10);
+    public static function checkProject(string $appid, string $appsecret){
+        $rs= self::httpRequst("checkserve",'get',['appid'=>$appid,'appsecret'=>$appsecret],[],10);
         return $rs;
     }
 

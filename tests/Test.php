@@ -72,6 +72,8 @@ class Test extends TestCase
 
              ]
         ]);
+        $dd= $sdk->checkProject();
+        echo json_encode($dd).'ZZZ'.PHP_EOL;
         $messages=$sdk->getMessages();
         echo json_encode($messages,JSON_PRETTY_PRINT);
         $this->assertEquals(true,true);
