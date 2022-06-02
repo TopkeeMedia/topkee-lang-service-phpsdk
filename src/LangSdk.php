@@ -207,6 +207,7 @@ class LangSdk
                 foreach ($this->versionObj['langs'] as $lang){
                     $localesMessages[$lang['code']]=self::flatArray($this->getLangKv($lang));
                 }
+                $this->needGetServeMessages= false;
                 // 记住改项目的服务器更新最后时间，这样就不会频繁请求服务器
                 $updated_at=self::checkProject();
                 if($updated_at!==false){
