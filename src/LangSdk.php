@@ -226,7 +226,7 @@ class LangSdk
     public function checkIfneedGetServeMessages():bool
     {
         $now=strtotime('now');
-        if( $this->latestCheckTime+30<$now) return $this->needGetServeMessages;
+        if( $this->latestCheckTime+30>$now) return $this->needGetServeMessages;
         $updated_at=self::checkProject();
         $this->latestCheckTime=$now;
         if($updated_at&&$updated_at>self::$updated_at){
