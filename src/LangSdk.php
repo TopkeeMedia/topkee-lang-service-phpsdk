@@ -71,7 +71,7 @@ class LangSdk
      * 静态成品变量 保存全局实例
      */
     private static $_instance = NULL;
-    private static $updated_at=0;
+    public static $updated_at=0;
     public $latestCheckTime=0;
     /**
      * @var bool
