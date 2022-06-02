@@ -48,32 +48,23 @@ class Test extends TestCase
 //
     public function testInit(){
         echo PHP_EOL;
-        $sdk=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
-        $sdk2=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
-        $sdk3=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
-        $sdk4=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
-        $sdk5=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
-        $sdk26=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
-        $sdk7=LangSdk::getInstance('fb44d7a8-9873-c4db-e7f0-c5f91e09c63a','7b9d76ef452ecdbb676baf2fa2d32573');
-        if($sdk7===$sdk){
-            echo '单例'.PHP_EOL;
-        }
+        $sdk=LangSdk::getInstance('8b628d3f-0722-e015-1d65-45ddc7d4f158','6539c39ae177c281ee6ee522b1cf1efd');
+
 //        $sdk->onLocaleMessage(function ($lang,$message) {
 //            echo $lang.PHP_EOL.json_encode($message,JSON_PRETTY_PRINT).PHP_EOL;
 //
 //        });
 
-        $sdk->loadLocalesMessages([
-            "en"=>[
-                "test.test2"=>"test",
-                "care"=>[
-                    "add"=>"test add2"
-                ]
+//        $sdk->loadLocalesMessages([
+//            "en"=>[
+//                "test.test2"=>"test",
+//                "care"=>[
+//                    "add"=>"test add2"
+//                ]
+//
+//             ]
+//        ]);
 
-             ]
-        ]);
-        $dd= $sdk->checkProject();
-        echo json_encode($dd).'ZZZ'.PHP_EOL;
         $messages=$sdk->getMessages();
         echo json_encode($messages,JSON_PRETTY_PRINT);
         $this->assertEquals(true,true);

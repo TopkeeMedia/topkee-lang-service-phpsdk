@@ -53,10 +53,10 @@ class LangSdk
      * @var bool
      */
     private $serveLive=false;
-    /**
-     * @var mixed|void
-     */
-    private $project=null;
+//    /**
+//     * @var mixed|void
+//     */
+//    private $project=null;
     /**
      * @var array
      */
@@ -72,6 +72,11 @@ class LangSdk
      */
     private static $_instance = NULL;
     private static $updated_at=0;
+    public $latestCheckTime=0;
+    /**
+     * @var bool
+     */
+    public $needGetServeMessages=true;
 
     /**
      * 静态工厂方法，返还此类的唯一实例
@@ -80,8 +85,6 @@ class LangSdk
     public static function getInstance(string $appid, string $appsecret) {
         if (is_null(self::$_instance)) {
             self::$_instance = new self($appid, $appsecret);
-            // 或者这样写
-            // self::$_instance = new self();
         }
 
         return self::$_instance;
@@ -102,11 +105,8 @@ class LangSdk
         $this->appsecret =trim($appsecret);
         $this->appid = trim($appid);
         $this->serveLive = $this->serverLiving();
-
-        $this->project = $this->getProject();
-        $this->messages = $this->getMessages();
-
     }
+
     public function onLocaleMessage(\Closure $onLocaleMessage){
         $this->onLocaleMessageClosure=$onLocaleMessage;
         return $this;
@@ -164,31 +164,27 @@ class LangSdk
         $conf=LangKvs::exportKv($this->appid,$this->appsecret,$this->version,$lang['code'])['data']['conf'];
         return json_decode($conf,true);
     }
-    public function getProject()
-    {
-        if(!$this->serveLive) return null;
-        if($this->project){
-            return $this->project;
-        }
-        return Project::getProject($this->appid,$this->appsecret)['data'];
-    }
+//    public function getProject()
+//    {
+//        if(!$this->serveLive) return null;
+//        if($this->project){
+//            return $this->project;
+//        }
+//        return Project::getProject($this->appid,$this->appsecret)['data'];
+//    }
     public function serverLiving(): bool
     {
         return self::checkProject()!==false;
     }
     public function getMessages(): array
     {
-//        if($this->messages_serve&&$this->messages){
-//            return $this->messages;
-//        }
         try {
             $messages_serve = $this->getServeMessages();
-            if($messages_serve) {
+            if($messages_serve&&$messages_serve!==$this->messages_serve) {
                $this->messages =self::mergMessages($this->messages,$messages_serve);
                $this->messages_serve = $messages_serve;
             }
         } catch (\Exception $exception) {}
-
         return $this->messages;
     }
     public function getServeMessages(): ?array
@@ -229,12 +225,16 @@ class LangSdk
     }
     public function checkIfneedGetServeMessages():bool
     {
+        $now=strtotime('now');
+        if( $this->latestCheckTime+30<$now) return $this->needGetServeMessages;
         $updated_at=self::checkProject();
+        $this->latestCheckTime=$now;
         if($updated_at&&$updated_at>self::$updated_at){
-          return true;
+            $this->needGetServeMessages= true;
         }else{
-          return false;
+            $this->needGetServeMessages= false;
         }
+        return $this->needGetServeMessages;
     }
 
     public function checkProject(){
@@ -248,6 +248,7 @@ class LangSdk
 
     public function mergMessages(?array $old_messages,?array $new_messages): array
     {
+//        $start_time = microtime(true);                         //获取程序开始执行的时间
         $old_messages=$old_messages??[];
         $new_messages=$new_messages??[];
         foreach ($new_messages as $key2=>&$message2){
@@ -263,7 +264,9 @@ class LangSdk
             }
         }
 
-
+//        $end_time = microtime(true);                        //获取程序执行结束的时间
+//        $run_time = ($end_time - $start_time) * 1000;       //计算差值 毫秒
+//        echo "mergMessages：$run_time 毫秒";
 
         return $new_messages;
     }
