@@ -3,12 +3,17 @@
 namespace Topkee\LangServicePhpsdk;
 
 use NestedJsonFlattener\Flattener\Flattener;
+use phpDocumentor\Reflection\Types\This;
 use Topkee\LangServicePhpsdk\api\LangKvs;
 use Topkee\LangServicePhpsdk\api\Project;
 use Topkee\LangServicePhpsdk\api\Version;
 
 class LangSdk
 {
+    /**
+     * @var bool
+     */
+    private static $needGetServeMessages=true;
     private  $langNames=[
           'zh'=> '简体中文',
           'zh-CN'=> '简体中文',
@@ -29,8 +34,8 @@ class LangSdk
           'ko_KR'=> '한국어',
           'ko'=> '한국어',
         ];
-    private $appid;
-    private $appsecret;
+    private $appid=null;
+    private $appsecret=null;
     private $version='latest';
     private $onLocaleMessageClosure;
     /**
@@ -51,25 +56,26 @@ class LangSdk
     /**
      * @var bool
      */
-    private $serveLive;
+    private $serveLive=false;
     /**
      * @var mixed|void
      */
-    private $project;
+    private $project=null;
     /**
      * @var array
      */
-    private $messages_serve;
+    private $messages_serve=[];
     /**
      * @var mixed
      */
-    private $versionObj;
+    private $versionObj=null;
 
 
     /**
      * 静态成品变量 保存全局实例
      */
     private static $_instance = NULL;
+    private static $updated_at=0;
 
     /**
      * 静态工厂方法，返还此类的唯一实例
@@ -99,7 +105,8 @@ class LangSdk
         }
         $this->appsecret =trim($appsecret);
         $this->appid = trim($appid);
-        $this->serveLive = $this->checkServe();
+        $this->serveLive = $this->serverLiving();
+
         $this->project = $this->getProject();
         $this->messages = $this->getMessages();
 
@@ -152,16 +159,18 @@ class LangSdk
         }
     }
     private function import2Serve(string $code, $messages,bool $check=true){
+        if(!$this->serveLive) return;
         $name =isset($this->langNames[$code])?$this->langNames[$code]:$code;
         LangKvs::importKv($this->appid,$this->appsecret,$code,$messages,$name,$check);
     }
     private function getLangKv($lang){
+        if(!$this->serveLive) return [];
         $conf=LangKvs::exportKv($this->appid,$this->appsecret,$this->version,$lang['code'])['data']['conf'];
-        $conf=self::decodeUnicode($conf);
         return json_decode($conf,true);
     }
     public function getProject()
     {
+        if(!$this->serveLive) return null;
         if($this->project){
             return $this->project;
         }
@@ -169,16 +178,13 @@ class LangSdk
     }
     public function serverLiving(): bool
     {
-        if($this->serveLive){
-            return $this->serveLive;
-        }
-        return self::checkServe();
+        return self::checkServe()!==false;
     }
     public function getMessages(): array
     {
-        if($this->messages_serve&&$this->messages){
-            return $this->messages;
-        }
+//        if($this->messages_serve&&$this->messages){
+//            return $this->messages;
+//        }
         try {
             $messages_serve = $this->getServeMessages();
             if($messages_serve) {
@@ -191,7 +197,7 @@ class LangSdk
     }
     public function getServeMessages(): ?array
     {
-        if ($this->project ||$this->serveLive) {
+        if ($this->serveLive&&self::$needGetServeMessages) {
             try {
                 try {
                     $this->versionObj =Version::getVersion($this->appid, $this->appsecret, $this->version)['data'];
@@ -209,18 +215,30 @@ class LangSdk
                 foreach ($this->versionObj['langs'] as $lang){
                     $localesMessages[$lang['code']]=self::flatArray($this->getLangKv($lang));
                 }
+                $updated_at=$this->checkServe();
+                if($updated_at!==false){
+                    self::$updated_at=$updated_at;
+                }
                 return $localesMessages;
             } catch (\Exception $exception) {
                 throw $exception;
             }
+
         }
-        return [];
+        return $this->messages_serve;
     }
-    public function getVersion(){}
-    public function checkServe():bool{
+    public function getVersion(){
+        return $this->versionObj;
+    }
+    public function checkServe(){
         try {
-            Project::checkServe();
-            return true;
+            $updated_at=Project::checkServe()['data']['updated_at'];
+            if($updated_at>self::$updated_at){
+                self::$needGetServeMessages=true;
+            }else{
+                self::$needGetServeMessages=false;
+            }
+           return $updated_at;
         }catch (\Exception $exception){
             return false;
         }
@@ -248,12 +266,13 @@ class LangSdk
         return $new_messages;
     }
     /**
-     * @param $messagesObj
+     * 嵌套数组转扁平数组
+     * @param $deepArr
      */
-    public static function flatArray(?array $messagesObj): array
+    public static function flatArray(?array $deepArr): array
     {
         $flattener = new Flattener();
-        $flattener->setArrayData($messagesObj??[]);
+        $flattener->setArrayData($deepArr??[]);
         $arr=$flattener->getFlatData();
         return is_array($arr[0])?$arr[0]:$arr;
     }
