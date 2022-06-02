@@ -52,7 +52,7 @@ composer require topkee/topkee-lang-service-phpsdk
 //        }
 
         // 4 安装i18n做翻译(不一定要使用这个库)
-        // composer require alpakaio/i18next-php
+        // composer require exactcure/i18next-php -W
         $i18n = new I18n([
             'lng'           =>  'en',
             'resources'     =>  $messages

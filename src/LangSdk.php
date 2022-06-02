@@ -47,7 +47,7 @@ class LangSdk
      *   "modeule.sub_modeule.key3": "xxx",
      *  }
      */
-    public $messages;
+    public $messages=[];
     /**
      * @var bool
      */
@@ -156,7 +156,9 @@ class LangSdk
         LangKvs::importKv($this->appid,$this->appsecret,$code,$messages,$name,$check);
     }
     private function getLangKv($lang){
-        return json_decode(LangKvs::exportKv($this->appid,$this->appsecret,$this->version,$lang['code'])['data']['conf'],true);
+        $conf=LangKvs::exportKv($this->appid,$this->appsecret,$this->version,$lang['code'])['data']['conf'];
+        $conf=self::decodeUnicode($conf);
+        return json_decode($conf,true);
     }
     public function getProject()
     {
@@ -254,6 +256,42 @@ class LangSdk
         $flattener->setArrayData($messagesObj??[]);
         $arr=$flattener->getFlatData();
         return is_array($arr[0])?$arr[0]:$arr;
+    }
+    private static function  deepPandding(array $arr,array $subkeyArr,$pandding)
+    {
+        if(count($subkeyArr)==1){
+            $key= $subkeyArr[0];
+            $arr[$key]=$pandding;
+            return $arr;
+        }
+        $key= array_pop($subkeyArr);
+        if(!isset($arr[$key])){
+            $arr[$key]=[];
+        }
+        $subArr=$arr[$key];
+        $arr[$key]=self::deepPandding($subArr,$subkeyArr,$pandding);
+        return $arr;
+
+    }
+
+    /** 扁平数组转为嵌套数组
+     * @param array $flatArr
+     * @return array
+     */
+    public static function flatArr2deep(array $flatArr):array
+    {
+        $rs=[];
+        $flatArr=self::flatArray($flatArr);
+        foreach ($flatArr as $key=>$value){
+            $subkeyArr = array_reverse(explode('.', $key));
+            $rs=self::deepPandding($rs,$subkeyArr,$value);
+
+        }
+        return $rs;
+    }
+    public function decodeUnicode($str)
+    {
+        return preg_replace_callback('/\\\\u([0-9a-f]{4})/i', function($matches){return mb_convert_encoding(pack("H*", $matches[1]), "UTF-8", "UCS-2BE");}, $str);
     }
 
 }
