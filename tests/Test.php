@@ -46,28 +46,33 @@ class Test extends TestCase
 //        $this->assertEquals($rs,true);
 //    }
 //
-    public function testInit(){
-        echo PHP_EOL;
-        $sdk=LangSdk::getInstance('8b628d3f-0722-e015-1d65-45ddc7d4f158','6539c39ae177c281ee6ee522b1cf1efd');
-
-//        $sdk->onLocaleMessage(function ($lang,$message) {
-//            echo $lang.PHP_EOL.json_encode($message,JSON_PRETTY_PRINT).PHP_EOL;
+//    public function testInit(){
+//        echo PHP_EOL;
+//        $sdk=LangSdk::getInstance('8b628d3f-0722-e015-1d65-45ddc7d4f158','6539c39ae177c281ee6ee522b1cf1efd');
 //
-//        });
-
-//        $sdk->loadLocalesMessages([
-//            "en"=>[
-//                "test.test2"=>"test",
-//                "care"=>[
-//                    "add"=>"test add2"
-//                ]
+////        $sdk->onLocaleMessage(function ($lang,$message) {
+////            echo $lang.PHP_EOL.json_encode($message,JSON_PRETTY_PRINT).PHP_EOL;
+////
+////        });
 //
-//             ]
-//        ]);
-
-        $messages=$sdk->getMessages();
-        echo json_encode($messages,JSON_PRETTY_PRINT);
-        $this->assertEquals(true,true);
+////        $sdk->loadLocalesMessages([
+////            "en"=>[
+////                "test.test2"=>"test",
+////                "care"=>[
+////                    "add"=>"test add2"
+////                ]
+////
+////             ]
+////        ]);
+//
+//        $messages=$sdk->getMessages();
+//        echo json_encode($messages,JSON_PRETTY_PRINT);
+//        $this->assertEquals(true,true);
+//    }
+    public function testLoadLocalMessagesByPath(){
+         $messages=LangSdk::loadLocalMessagesByPath(ROOT_PATH."src/lang");
+         echo json_encode($messages,JSON_PRETTY_PRINT);
+         $this->assertEquals(true,true);
     }
 //    public function testArrayMerg(){
 //

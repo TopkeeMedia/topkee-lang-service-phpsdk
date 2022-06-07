@@ -77,6 +77,7 @@ class LangSdk
      * @var bool
      */
     public $needGetServeMessages=true;
+    private $project=null;
 
     /**
      * 静态工厂方法，返还此类的唯一实例
@@ -88,6 +89,19 @@ class LangSdk
         }
 
         return self::$_instance;
+    }
+
+    /**
+     * @param $path
+     * @param $file
+     * @return array|string|string[]
+     */
+    private static function getRPath($path, $file,$ext)
+    {
+        $rPath = str_replace($path, '', $file);
+        $rPath = str_replace($ext, '', $rPath);
+        $rPath = str_replace('/', '.', trim($rPath, '/'));
+        return $rPath;
     }
 
     /**
@@ -164,22 +178,23 @@ class LangSdk
         $conf=LangKvs::exportKv($this->appid,$this->appsecret,$this->version,$lang['code'])['data']['conf'];
         return json_decode($conf,true);
     }
-//    public function getProject()
-//    {
-//        if(!$this->serveLive) return null;
-//        if($this->project){
-//            return $this->project;
-//        }
-//        return Project::getProject($this->appid,$this->appsecret)['data'];
-//    }
+    public function getProject()
+    {
+        if(!$this->serveLive) return null;
+        if($this->project){
+            return $this->project;
+        }
+        $this->project=Project::getProject($this->appid,$this->appsecret)['data'];
+        return $this->project;
+    }
     public function serverLiving(): bool
     {
         return self::checkProject()!==false;
     }
-    public function getMessages(): array
+    public function getMessages($loadImmediately=false): array
     {
         try {
-            $messages_serve = $this->getServeMessages();
+            $messages_serve = $this->getServeMessages($loadImmediately);
             if($messages_serve&&$messages_serve!==$this->messages_serve) {
                $this->messages =self::mergMessages($this->messages,$messages_serve);
                $this->messages_serve = $messages_serve;
@@ -187,9 +202,9 @@ class LangSdk
         } catch (\Exception $exception) {}
         return $this->messages;
     }
-    public function getServeMessages(): ?array
+    public function getServeMessages($loadImmediately=false): ?array
     {
-        if ($this->serveLive&&self::checkIfneedGetServeMessages()) {
+        if ($loadImmediately||($this->serveLive&&self::checkIfneedGetServeMessages())) {
             try {
                 try {
                     $this->versionObj =Version::getVersion($this->appid, $this->appsecret, $this->version)['data'];
@@ -317,6 +332,84 @@ class LangSdk
     public static function decodeUnicode($str)
     {
         return preg_replace_callback('/\\\\u([0-9a-f]{4})/i', function($matches){return mb_convert_encoding(pack("H*", $matches[1]), "UTF-8", "UCS-2BE");}, $str);
+    }
+
+    private static function get_allfiles($path,&$files) {
+        if(is_dir($path)){
+            $dp = dir($path);
+            while ($file = $dp ->read()){
+                if($file !="." && $file !=".."){
+                    self::get_allfiles($path."/".$file, $files);
+                }
+            }
+            $dp ->close();
+        }
+        if(is_file($path)){
+            $files[] =  $path;
+        }
+    }
+    /**
+     * 判断字符串是否以指定字符串结尾
+     * @param string $str 原字串
+     * @param string $needle 结尾字串
+     * @return bool
+     */
+    public static function endWith($str, $needle) {
+        $length = strlen($needle);
+        if($length == 0)
+        {
+            return true;
+        }
+        return (substr($str, -$length) === $needle);
+    }
+    private static function getRequire($path, array $data = [])
+    {
+        if (is_file($path)) {
+            $__path = $path;
+            $__data = $data;
+            return (static function () use ($__path, $__data) {
+                extract($__data, EXTR_SKIP);
+                return require $__path;
+            })();
+        }
+
+        throw new \Exception("File does not exist at path {$path}.");
+    }
+    /**
+     * 从给定的文件中加载语言包
+     */
+    public static function loadLocalMessagesByPath($path)
+    {
+        $files=[];
+        self::get_allfiles($path,$files);
+        $output=[];
+        foreach ($files as $file) {
+            if (file_exists($file)) {
+                if(self::endWith($file,'.php')){
+                    $rPath = self::getRPath($path, $file,'.php');
+                    $arr=self::getRequire($file);
+
+                }else if(self::endWith($file,'.json')){
+                    $arr =json_decode(file_get_contents($file),true);
+                    if (is_null($arr) || json_last_error() !== JSON_ERROR_NONE) {
+                        throw new \Exception("Translation file [{$file}] contains an invalid JSON structure.");
+                    }
+                    $rPath = self::getRPath($path, $file,'.json');
+                }else{
+                    return [];
+                }
+                $arr=self::flatArray($arr);
+                if($rPath){
+                    $new_arr=[];
+                    foreach ($arr as $key=>$val){
+                        $new_arr["$rPath.$key"]=$val;
+                    }
+                    $arr=$new_arr;
+                }
+                $output = array_merge($output, $arr);
+            }
+        }
+        return self::flatArr2deep($output);
     }
 
 }
