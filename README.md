@@ -3,10 +3,10 @@
  记住项目的appid和appsecret， 假设你的项目  appid='111111'  appsecret='222222'
  
 ## 安装php版sdk
-```cmd
+```shell
 composer require topkee/topkee-lang-service-phpsdk
 ```
-## 使用
+## 基本使用
 ```php
         // 假设这是本地配置
         $localMessages=[
@@ -62,3 +62,10 @@ composer require topkee/topkee-lang-service-phpsdk
         
 
 ```
+
+
+## 本地配置上传下载命令
+```shell
+php vendor/bin/topkeelang-upload.php appid=111111 APPSECRET=222222 path=./resources/lang
+```
+> path是你本地存放多语言配置的目录，比如laravel的多语言目录就是./resources/lang
