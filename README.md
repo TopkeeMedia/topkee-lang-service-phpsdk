@@ -62,10 +62,12 @@ composer require topkee/topkee-lang-service-phpsdk
         
 
 ```
-
-
 ## 本地配置上传下载命令
 ```shell
 php vendor/bin/topkeelang-upload.php appid=111111 APPSECRET=222222 path=./resources/lang
 ```
 > path是你本地存放多语言配置的目录，比如laravel的多语言目录就是./resources/lang
+
+## 其他语言sdk
++ [topkee-lang-service-phpsdk](https://github.com/TopkeeMedia/topkee-lang-service-phpsdk)
++ [topkee-lang-service-jssdk](https://github.com/TopkeeMedia/topkee-lang-service-jssdk)
