@@ -24,7 +24,7 @@ class Command
 //            echo "本地配置 ".json_encode($localmsg,JSON_PRETTY_PRINT).PHP_EOL;
             $project=$sdk->getProject();
             if(!$project){
-                echo ("topkeelang-upload运行失败！ APPID或APPSECRET 错误");
+                echo ("APPID或APPSECRET 错误").PHP_EOL;
                 return 1;
             }
             if($localmsg&&count($localmsg)>0){
