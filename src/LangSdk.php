@@ -126,21 +126,18 @@ class LangSdk
         return $this;
     }
 
+    /**
+     *
+     * @param array $messages 0到多个语言配置 {en:{...},zh:{...}}
+     * @return array
+     */
     public function loadLocalesMessages(array $messages): array
     {
+
+
         $messagesObj = is_string($messages)?json_decode($messages,true):$messages;
         foreach ($messagesObj as $key=>&$value){
-            if(strpos($key,'.') !== false){
-                throw new \Exception("loadLocalesMessages参数异常，应为{\"en\":{\"key1.key2.key3\":\"xxx\"},\"lang2\":{\"key1.key2.key3\":\"xxx\"}} 这种结构");
-            }
-            if(empty($value)){
-                $value=[];
-                continue;
-            }
-            if(!is_array($value)){
-                throw new \Exception("语言 $key 配置必须是数组形式");
-            }
-            $value=self::flatArray($value);
+            if(is_array($value)) $value=self::flatArray($value);
         }
         // 以服务器配置优先
         $this->messages=self::mergMessages($messagesObj,$this->messages);
@@ -262,21 +259,29 @@ class LangSdk
         }
     }
 
-    public function mergMessages(?array $old_messages,?array $new_messages): array
+    public static function mergMessages(?array $old_messages,?array $new_messages): array
     {
 //        $start_time = microtime(true);                         //获取程序开始执行的时间
         $old_messages=$old_messages??[];
         $new_messages=$new_messages??[];
         foreach ($new_messages as $key2=>&$message2){
-            $message2=self::flatArray($message2);
+            if(is_array($message2)) {
+                $message2=self::flatArray($message2);
+            }
         }
         foreach ($old_messages as $key=>&$message){
-            $message=self::flatArray($message);
-            if(isset($new_messages[$key])){//包含该语言，合并
-                $new_message=$new_messages[$key];
-                $new_messages[$key]=array_merge($message,$new_message);
+            if(is_array($message)){
+                $message=self::flatArray($message);
+                if(isset($new_messages[$key])){//包含该语言，合并
+                    $new_message=$new_messages[$key];
+                    $new_messages[$key]=array_merge($message,$new_message);
+                }else{
+                    $new_messages[$key]=$message;// 包含该语言，添加
+                }
             }else{
-                $new_messages[$key]=$message;// 包含该语言，添加
+                if(!isset($new_messages[$key])){
+                    $new_messages[$key]=$message;
+                }
             }
         }
 
@@ -322,12 +327,23 @@ class LangSdk
     {
         $rs=[];
         $flatArr=self::flatArray($flatArr);
+        $langArr=[];
         foreach ($flatArr as $key=>$value){
-            $subkeyArr = array_reverse(explode('.', $key));
-            $rs=self::deepPandding($rs,$subkeyArr,$value);
-
+            if(!self::checkKey($key)){ // 包含特殊字符，比如汉字，_.:-以外的标点符号，则不进行嵌套处理
+                $lang = explode('.', $key)[0];
+                $realKey=substr($key,(strlen($lang)+1));
+                if(!isset($langArr[$lang])) $langArr[$lang]=[];
+                $langArr[$lang][$realKey]=$value;
+            }else{
+                $subkeyArr = array_reverse(explode('.', $key));
+                $rs=self::deepPandding($rs,$subkeyArr,$value);
+            }
         }
+        $rs= self::mergMessages($langArr,$rs);
         return $rs;
+    }
+    private static function checkKey($key){
+        return  preg_match("/^[a-zA-Z0-9_.:-]{1,}$/", $key);
     }
     public static function decodeUnicode($str)
     {

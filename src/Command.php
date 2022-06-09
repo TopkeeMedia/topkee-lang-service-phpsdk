@@ -19,33 +19,39 @@ class Command
                 echo "目录$path 不存在 ".PHP_EOL;
                 return 1;
             }
-            $localmsg=LangSdk::loadLocalMessagesByPath($path);
-            $sdk=LangSdk::getInstance($parms['APPID'],$parms['APPSECRET']);
-//            echo "本地配置 ".json_encode($localmsg,JSON_PRETTY_PRINT).PHP_EOL;
-            $project=$sdk->getProject();
-            if(!$project){
-                echo ("APPID或APPSECRET 错误").PHP_EOL;
+            try {
+                $localmsg=LangSdk::loadLocalMessagesByPath($path);
+                $sdk=LangSdk::getInstance($parms['APPID'],$parms['APPSECRET']);
+                $project=$sdk->getProject();
+                if(!$project){
+                    echo ("APPID或APPSECRET 错误").PHP_EOL;
+                    return 1;
+                }
+                if($localmsg&&count($localmsg)>0){
+                    $sdk->loadLocalesMessages($localmsg);
+                    $msg=$sdk->getMessages();
+                    $sdk->callSetLocaleMessage(true);
+                    echo ("本地配置已上传, 十秒后保存配置到本地").PHP_EOL;
+                    $index=0;
+                    while (++$index<10){
+                        sleep(1);
+                        echo ("$index s").PHP_EOL;
+                    }
+                }else{
+                    echo ("未检测到本地配置").PHP_EOL;
+                }
+                $messages=$sdk->getMessages(true);
+                foreach ($messages as $lang=>$message){
+                    self::replace($path."/$lang.json",$sdk->decodeUnicode(json_encode($message,JSON_PRETTY_PRINT)));
+                }
+                echo ("保存配置到本地").PHP_EOL;
+                echo ("topkeelang-upload运行成功！").PHP_EOL;
+                return 0;
+            }catch (\Exception $exception){
+                echo ("出现异常 ".$exception->getMessage()." 堆栈信息： ".$exception->getTraceAsString()).PHP_EOL;
                 return 1;
             }
-            if($localmsg&&count($localmsg)>0){
-                $sdk->loadLocalesMessages($localmsg);
-                $sdk->callSetLocaleMessage(true);
-                echo ("本地配置已上传, 十秒后保存配置到本地").PHP_EOL;
-                $index=0;
-                while (++$index<10){
-                   sleep(1);
-                   echo ("$index s").PHP_EOL;
-                }
-            }else{
-                echo ("未检测到本地配置").PHP_EOL;
-            }
-            $messages=$sdk->getMessages(true);
-            foreach ($messages as $lang=>$message){
-                self::replace($path."/$lang.json",$sdk->decodeUnicode(json_encode($message,JSON_PRETTY_PRINT)));
-            }
-            echo ("保存配置到本地").PHP_EOL;
-            echo ("topkeelang-upload运行成功！").PHP_EOL;
-            return 0;
+
         }else{
             return 1;
         }
