@@ -9,9 +9,6 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 use PHPUnit\Framework\TestCase;
-use Topkee\LangServicePhpsdk\api\BaseApi;
-use Topkee\LangServicePhpsdk\api\Instanze;
-use Topkee\LangServicePhpsdk\api\Project;
 use Topkee\LangServicePhpsdk\LangSdk;
 
 

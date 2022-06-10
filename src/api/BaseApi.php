@@ -12,7 +12,7 @@ abstract class BaseApi
     public static function getUrl(){
       return self::url;
     }
-    /**
+    /** http请求方法
      * @param string $api
      * @param string $type
      * @param array $faxData

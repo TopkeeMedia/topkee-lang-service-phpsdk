@@ -10,6 +10,7 @@ use Topkee\LangServicePhpsdk\api\Version;
 
 class LangSdk
 {
+    /** @var string[] 存储一些常用语言的名称 */
     private  $langNames=[
           'zh'=> '简体中文',
           'zh-CN'=> '简体中文',
@@ -30,11 +31,15 @@ class LangSdk
           'ko_KR'=> '한국어',
           'ko'=> '한국어',
         ];
+    /** @var string|null 项目appid */
     private $appid=null;
+    /** @var string|null 项目密钥 */
     private $appsecret=null;
+    /** @var string 版本编号，写死latest即可 */
     private $version='latest';
+    /** @var \Closure 每个语言的合并后配置回调函数设置，非必须*/
     private $onLocaleMessageClosure;
-    /**
+    /** 合并后的语言配置
      * @var array
      * 形如
      * "zh_CN": {
@@ -49,38 +54,39 @@ class LangSdk
      *  }
      */
     public $messages=[];
-    /**
+    /** 服务端是否可用
      * @var bool
      */
     private $serveLive=false;
-//    /**
-//     * @var mixed|void
-//     */
-//    private $project=null;
-    /**
+
+    /** 服务器语言配置
      * @var array
      */
     private $messages_serve=[];
-    /**
+    /** 版本详情数据
      * @var mixed
      */
     private $versionObj=null;
-
 
     /**
      * 静态成品变量 保存全局实例
      */
     private static $_instance = NULL;
+    /** 语言项目最后修改时间戳
+     * @var int
+     */
     public static $updated_at=0;
+    /** @var int 最后一次检测项目的时间 */
     public $latestCheckTime=0;
-    /**
+    /**是否需要调用api获取服务器配置
      * @var bool
      */
     public $needGetServeMessages=true;
+    /** @var null 项目详情 */
     private $project=null;
 
     /**
-     * 静态工厂方法，返还此类的唯一实例
+     * 获取单例
      * @throws \Exception
      */
     public static function getInstance(string $appid, string $appsecret) {
@@ -91,7 +97,8 @@ class LangSdk
         return self::$_instance;
     }
 
-    /**
+    /**返回语言层级，作为语言键的前缀
+     * 比如$file=./lang/en/topkee.php, $path=./lang 返回en.topkee
      * @param $path
      * @param $file
      * @return array|string|string[]
@@ -114,11 +121,17 @@ class LangSdk
     private function __construct(string $appid, string $appsecret)
     {
         if(empty($appid)||empty($appid)){
-            throw new \Exception("缺少 appsecret或者appid");
+            throw new \Exception("缺少 APPID或APPSECRET");
         }
         $this->appsecret =trim($appsecret);
         $this->appid = trim($appid);
         $this->serveLive = $this->serverLiving();
+        if($this->serveLive ){
+            $project=self::getProject();
+            if(!$project){
+                throw new \Exception("APPID或APPSECRET错误");
+            }
+        }
     }
 
     public function onLocaleMessage(\Closure $onLocaleMessage){
@@ -127,7 +140,7 @@ class LangSdk
     }
 
     /**
-     *
+     * 加载本地语言列表
      * @param array $messages 0到多个语言配置 {en:{...},zh:{...}}
      * @return array
      */
@@ -144,6 +157,11 @@ class LangSdk
         $this->callSetLocaleMessage();
         return $this->messages;
     }
+
+    /** 触发onLocaleMessage
+     * @param bool $withUpdate true=将配置更新到服务端
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function callSetLocaleMessage(bool $withUpdate=false){
         if ($withUpdate) {
             $this->addLang2Serve();
@@ -188,6 +206,12 @@ class LangSdk
     {
         return self::checkProject()!==false;
     }
+
+    /**获取合并语言列表
+     * @param false $loadImmediately true=立即从服务端加载，即会调用一遍下载配置的接口，
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getMessages($loadImmediately=false): array
     {
         try {
@@ -199,6 +223,12 @@ class LangSdk
         } catch (\Exception $exception) {}
         return $this->messages;
     }
+
+    /** 获取服务端语言列表
+     * @param false $loadImmediately true=立即从服务端加载，忽略checkIfneedGetServeMessages
+     * @return array|null
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getServeMessages($loadImmediately=false): ?array
     {
         if ($loadImmediately||($this->serveLive&&self::checkIfneedGetServeMessages())) {
@@ -236,6 +266,11 @@ class LangSdk
     public function getVersion(){
         return $this->versionObj;
     }
+
+    /**判断是否需要从服务器获取配置
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function checkIfneedGetServeMessages():bool
     {
         $now=strtotime('now');
@@ -250,6 +285,10 @@ class LangSdk
         return $this->needGetServeMessages;
     }
 
+    /** 获取项目最后修改时间，如果服务器异常，返回false
+     * @return false|int|mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function checkProject(){
         try {
             $updated_at=Project::checkProject($this->appid,$this->appsecret)['data']['updated_at']??100;
@@ -259,6 +298,11 @@ class LangSdk
         }
     }
 
+    /** 新旧语言配置数组进行合并
+     * @param array|null $old_messages 旧语言配置数组
+     * @param array|null $new_messages 新语言配置数组
+     * @return array
+     */
     public static function mergMessages(?array $old_messages,?array $new_messages): array
     {
 //        $start_time = microtime(true);                         //获取程序开始执行的时间
@@ -350,6 +394,10 @@ class LangSdk
         return preg_replace_callback('/\\\\u([0-9a-f]{4})/i', function($matches){return mb_convert_encoding(pack("H*", $matches[1]), "UTF-8", "UCS-2BE");}, $str);
     }
 
+    /** 递归获取目录下所有文件
+     * @param $path
+     * @param $files
+     */
     private static function get_allfiles($path,&$files) {
         if(is_dir($path)){
             $dp = dir($path);
@@ -401,6 +449,7 @@ class LangSdk
         $output=[];
         foreach ($files as $file) {
             if (file_exists($file)) {
+                /** 不同的配置文件读取方式 */
                 if(self::endWith($file,'.php')){
                     $rPath = self::getRPath($path, $file,'.php');
                     $arr=self::getRequire($file);
