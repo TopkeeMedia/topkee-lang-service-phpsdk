@@ -12,7 +12,7 @@
   5. 加载本地语言列表到sdk，用于下一步合并(非必须，如果后面都是在服务端修改配置，这一步就不需要)
   6. 合并服务端和本地语言列表
   7. 将合并后的语言列表动态设置到你的项目里(这一步不在sdk里)
-  > 1,2在sdk初始化的时候，3，4，6在getMessages(),5在loadLocalesMessages，LangSdk中所有属性的初始值作为你的语言sdk的参考
+  > 1,2在sdk初始化的时候，3，4，6在getMessages(),5在loadLocalesMessages，LangSdk中所有属性的初始值作为你的语言sdk的参考,主要是$version='latest' 写死即可
   
 ## 上传下载功能(Command.php)
   1. 获得3个参数 'APPID', 'APPSECRET', 'PATH'(语言配置目录)
