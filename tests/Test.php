@@ -9,6 +9,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 use PHPUnit\Framework\TestCase;
+use Topkee\LangServicePhpsdk\api\BaseApi;
 use Topkee\LangServicePhpsdk\LangSdk;
 
 
@@ -27,15 +28,15 @@ class Test extends TestCase
 //        });
 //        $this->assertEquals($sdk,$sdk2);
 //    }
-//    public function testHttp(){
-//        $client = new Client();
-//        $res = $client->request('GET', 'https://market-api.topkee.top/v1/lang/checkserve', [
-//
-//        ]);
-//        $rs=$res->getBody()->getContents();
-//        $this->Log()->info("http $rs");
-//        $this->assertNotEmpty($rs);
-//    }
+    public function testHttp(){
+        $client = new Client();
+        $res = BaseApi::httpRequst('checkserve','get',[
+            'appid'=>'7e7e1bb4-6493-015c-6a98-5bc386d40b9f',
+            'appsecret'=>'9dc3f9394792608559dd2be74a4d0b01',
+        ]);
+        $this->Log()->info("http ",$res);
+        $this->assertNotEmpty($res);
+    }
 //    public function testCheckServe(){
 //
 //        $sdk=new LangSdk(1122,3344);
@@ -66,11 +67,11 @@ class Test extends TestCase
 //        echo json_encode($messages,JSON_PRETTY_PRINT);
 //        $this->assertEquals(true,true);
 //    }
-    public function testLoadLocalMessagesByPath(){
-         $messages=LangSdk::loadLocalMessagesByPath(ROOT_PATH."src/lang");
-         echo json_encode($messages,JSON_PRETTY_PRINT);
-         $this->assertEquals(true,true);
-    }
+//    public function testLoadLocalMessagesByPath(){
+//         $messages=LangSdk::loadLocalMessagesByPath(ROOT_PATH."src/lang");
+//         echo json_encode($messages,JSON_PRETTY_PRINT);
+//         $this->assertEquals(true,true);
+//    }
 //    public function testArrayMerg(){
 //
 //       $arr=[

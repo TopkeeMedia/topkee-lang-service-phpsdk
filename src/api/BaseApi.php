@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class BaseApi
 {
-    const url="https://market-api.topkee.top/v1/lang/";
+    const url="https://lang.service.topkee.com/v1/lang/";
 //    const url="http://localhost:8089/v1/lang/";
     public static function getUrl(){
       return self::url;
@@ -32,6 +32,7 @@ abstract class BaseApi
         }
         $headers['Content-type'] = 'application/json;charset=utf-8';
         $options['headers']      = $headers;
+        $options['verify']       = false;
         try {
             $response       = $client->request($type, $url, $options);
             $body           = $response->getBody();
