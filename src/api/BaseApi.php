@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class BaseApi
 {
-    const url="https://lang.service.topkee.com/v1/lang/";
+    const url="https://lang.cs.topkee.com/v1/lang/";
 //    const url="http://localhost:8089/v1/lang/";
     public static function getUrl(){
       return self::url;
